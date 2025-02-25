@@ -1,0 +1,17 @@
+SELECT 
+    i.student_id,
+    i.date_registered,
+    MIN(e.date_watched) AS first_date_watched,
+    MIN(p.date_purchased) AS first_date_purchased,
+    DATEDIFF(i.date_registered, MIN(e.date_watched)) AS days_diff_reg_watch,
+    DATEDIFF(MIN(e.date_watched), MIN(p.date_purchased)) AS days_diff_watch_purch
+FROM
+    student_engagement e
+        INNER JOIN
+    student_info i ON e.student_id = i.student_id
+        LEFT JOIN
+    student_purchases p ON i.student_id = p.student_id
+GROUP BY 
+    i.student_id
+HAVING 
+    first_date_watched <= first_date_purchased OR first_date_purchased IS NULL;
